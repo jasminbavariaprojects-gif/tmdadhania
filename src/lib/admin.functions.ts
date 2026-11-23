@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 import { LEAD_STATUSES, type LeadStatus } from "@/lib/lead-status";
+import { isApprovedAdminEmail } from "@/lib/admin-access";
 
 export { LEAD_STATUSES };
 export type { LeadStatus };
@@ -28,8 +29,12 @@ const updateSchema = z.object({
   notes: z.string().trim().max(2000).nullable(),
 });
 
-async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
-  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string, email: unknown) {
+  if (!isApprovedAdminEmail(email)) {
+    throw new Error("This account is not allowed to view leads.");
+  }
+
+  const { data, error } = await supabase.rpc("is_approved_admin", { _user_id: userId });
   if (error || data !== true) {
     throw new Error("This account is not allowed to view leads.");
   }
@@ -38,7 +43,7 @@ async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
 export const listLeads = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdmin(context.supabase, context.userId, context.claims.email);
 
     const { data: enquiries, error: enquiryError } = await context.supabase
       .from("enquiry_submissions")
@@ -64,7 +69,7 @@ export const updateLead = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdmin(context.supabase, context.userId, context.claims.email);
 
     const patch = { status: data.status, admin_notes: data.notes };
 

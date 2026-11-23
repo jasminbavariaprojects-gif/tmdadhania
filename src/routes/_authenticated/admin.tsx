@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listLeads, updateLead, type Lead } from "@/lib/admin.functions";
 import { LEAD_STATUSES } from "@/lib/lead-status";
 import { firm, services } from "@/lib/site";
+import { supabase } from "@/integrations/supabase/client";
 
 const leadsQueryOptions = {
   queryKey: ["admin", "leads"],
@@ -14,6 +15,12 @@ const leadsQueryOptions = {
 };
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) return;
+    const { data: allowed } = await supabase.rpc("is_approved_admin", { _user_id: data.user.id });
+    if (allowed !== true) throw new Error("Administrator access required");
+  },
   loader: ({ context }) => context.queryClient.ensureQueryData(leadsQueryOptions),
   head: () => ({
     meta: [
@@ -27,7 +34,21 @@ export const Route = createFileRoute("/_authenticated/admin")({
     ],
   }),
   component: AdminPage,
+  errorComponent: AdminAccessError,
 });
+
+function AdminAccessError() {
+  return (
+    <section className="container-site flex min-h-[60vh] items-center justify-center py-12">
+      <div className="max-w-md text-center">
+        <p className="eyebrow">Access denied</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-primary">Administrator access required</h1>
+        <p className="mt-3 text-sm text-muted-foreground">This account cannot view lead data. Sign in with the approved administrator account.</p>
+        <Link to="/auth" className="btn-navy mt-6 inline-flex">Return to sign in</Link>
+      </div>
+    </section>
+  );
+}
 
 const statusLabels: Record<string, string> = {
   new: "New",
