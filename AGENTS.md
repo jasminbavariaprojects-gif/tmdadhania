@@ -30,3 +30,5 @@ use the editor.
 <!-- LOVABLE:END -->
 - Site content/data lives in src/lib/site.ts so pages stay reusable; phase 2 moves it to Cloud for the admin.
 - Public enquiry and booking forms save through server functions into Cloud tables; submission tables remain service-role only until the authenticated admin area is added.
+- Admin access is a row in public.user_roles (app_role enum) checked by the security-definer public.has_role() inside requireSupabaseAuth server functions; never store roles on profiles or decide admin in the browser.
+- The app has exactly one supabase.auth.onAuthStateChange listener, in src/routes/__root.tsx, which feeds the src/lib/auth-session.ts snapshot store that header/footer affordances read.
