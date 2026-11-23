@@ -29,3 +29,4 @@ use the editor.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
 - Site content/data lives in src/lib/site.ts so pages stay reusable; phase 2 moves it to Cloud for the admin.
+- Public enquiry and booking forms save through server functions into Cloud tables; submission tables remain service-role only until the authenticated admin area is added.

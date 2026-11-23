@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1795412047019,
+      "tag": "0000_create_enquiry_and_booking_submissions",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795412197703,
+      "tag": "0001_restrict_submission_table_privileges",
+      "breakpoints": true
+    }
+  ]
+}
