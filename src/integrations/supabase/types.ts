@@ -119,6 +119,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_approved_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin"

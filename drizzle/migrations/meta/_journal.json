@@ -22,6 +22,13 @@
       "when": 1795413043336,
       "tag": "0002_add_admin_roles_and_lead_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795413651325,
+      "tag": "0003_restrict_admin_to_approved_email",
+      "breakpoints": true
     }
   ]
 }
