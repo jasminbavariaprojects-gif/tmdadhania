@@ -29,6 +29,20 @@
       "when": 1795413651325,
       "tag": "0003_restrict_admin_to_approved_email",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795414138160,
+      "tag": "0004_close_admin_role_checks_to_anonymous_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795414164232,
+      "tag": "0005_restrict_admin_role_table_privileges",
+      "breakpoints": true
     }
   ]
 }
