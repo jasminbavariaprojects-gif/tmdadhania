@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { firm, services } from "@/lib/site";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { NewsletterForm } from "./NewsletterForm";
 
 export function SiteFooter() {
+  const user = useAuthUser();
   return (
     <footer className="bg-navy-deep text-primary-foreground">
       <div className="container-site grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
@@ -38,6 +40,7 @@ export function SiteFooter() {
         <div className="container-site flex flex-col gap-2 py-5 text-xs text-primary-foreground/60 md:flex-row md:justify-between">
           <p>© {new Date().getFullYear()} {firm.name}. All rights reserved.</p>
           <p>Information on this website is for general guidance only and does not constitute professional advice or solicitation.</p>
+          <Link to={user ? "/admin" : "/auth"} className="hover:text-gold">{user ? "Leads" : "Team sign in"}</Link>
         </div>
       </div>
     </footer>

@@ -15,6 +15,13 @@
       "when": 1795412197703,
       "tag": "0001_restrict_submission_table_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795413043336,
+      "tag": "0002_add_admin_roles_and_lead_fields",
+      "breakpoints": true
     }
   ]
 }

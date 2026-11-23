@@ -1,7 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Menu, Phone, X } from "lucide-react";
 import { useState } from "react";
 import { firm } from "@/lib/site";
+import { useAuthUser } from "@/hooks/useAuthUser";
+import { supabase } from "@/integrations/supabase/client";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -14,6 +17,17 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const user = useAuthUser();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="container-site flex h-16 items-center justify-between gap-4">
@@ -33,7 +47,14 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <a href={firm.phoneHref} className="flex items-center gap-2 text-sm font-semibold text-primary"><Phone className="h-4 w-4 text-gold" />{firm.phone}</a>
-          <Link to="/contact" className="btn-navy">Book Consultation</Link>
+          {user ? (
+            <>
+              <Link to="/admin" className="btn-navy">Leads</Link>
+              <button type="button" onClick={handleSignOut} className="text-sm font-medium text-primary underline underline-offset-4">Sign out</button>
+            </>
+          ) : (
+            <Link to="/contact" className="btn-navy">Book Consultation</Link>
+          )}
         </div>
         <button className="lg:hidden" aria-label="Toggle menu" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
       </div>
@@ -44,6 +65,14 @@ export function SiteHeader() {
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="py-2.5 font-medium">{n.label}</Link>
             ))}
             <a href={firm.phoneHref} className="btn-navy mt-2 justify-center"><Phone className="h-4 w-4" />Call {firm.phone}</a>
+            {user ? (
+              <>
+                <Link to="/admin" onClick={() => setOpen(false)} className="btn-gold mt-2 justify-center">Leads</Link>
+                <button type="button" onClick={handleSignOut} className="py-2.5 text-left text-sm font-medium text-primary underline underline-offset-4">Sign out</button>
+              </>
+            ) : (
+              <Link to="/auth" onClick={() => setOpen(false)} className="py-2.5 text-sm font-medium text-primary underline underline-offset-4">Team sign in</Link>
+            )}
           </div>
         </nav>
       )}
