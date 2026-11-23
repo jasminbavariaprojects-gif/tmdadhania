@@ -5,12 +5,13 @@ import { LEAD_STATUSES } from "@/lib/lead-status";
 import { isApprovedAdminEmail } from "@/lib/admin-access";
 
 describe("Administrator email restriction", () => {
-  it("allows only jasmin.bavria.projects@gmail.com", () => {
-    expect(isApprovedAdminEmail("jasmin.bavria.projects@gmail.com")).toBe(true);
-    expect(isApprovedAdminEmail("JASMIN.BAVRIA.PROJECTS@gmail.com")).toBe(true);
+  it("allows only jasmin.bavaria.projects@gmail.com", () => {
+    expect(isApprovedAdminEmail("jasmin.bavaria.projects@gmail.com")).toBe(true);
+    expect(isApprovedAdminEmail("JASMIN.BAVARIA.PROJECTS@gmail.com")).toBe(true);
   });
 
-  it("rejects every other email and missing email claims", () => {
+  it("rejects the previous address, every other email and missing email claims", () => {
+    expect(isApprovedAdminEmail("jasmin.bavria.projects@gmail.com")).toBe(false);
     expect(isApprovedAdminEmail("blocked.admin@example.com")).toBe(false);
     expect(isApprovedAdminEmail(undefined)).toBe(false);
   });
